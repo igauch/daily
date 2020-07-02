@@ -1,0 +1,20 @@
+{
+  "name": "daily",
+  "version": "1.0.0",
+  "description": "gauch daily",
+  "main": "index.js",
+  "scripts": {
+    "start": "node serve.js"
+  },
+  "keywords": [
+    "gauch",
+    "daily",
+    "learn"
+  ],
+  "author": "gauch",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "http-proxy-middleware": "^1.0.4"
+  }
+}

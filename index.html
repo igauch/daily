@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>GAUCH daily nav</title>
+</head>
+<body>
+<div id="app"></div>
+<script>
+  const appEl = document.getElementById('app')
+  const navs = [
+    'base/nav/history/demo'
+  ]
+  navs.forEach(path => {
+    const aEl = document.createElement('a')
+    aEl.innerHTML = path
+    aEl.href = './' + path + '.html'
+    appEl.append(aEl)
+  })
+</script>
+</body>
+</html>
