@@ -5,6 +5,33 @@
     <title>history</title>
 </head>
 <body>
+<button onclick="pushState()">pushState</button>
+<button onclick="replaceState()">replaceState</button>
+<button onclick="get()">请求</button>
+<script>
+  let page = 1
+  const pushState = function() {
+    history.pushState({
+      page
+    }, null, `?page=${page}`)
+    page++
+  }
 
+  const replaceState = function() {
+    history.replaceState({
+      page: 'replace'
+    }, null, `&replace`)
+  }
+
+  window.onpopstate = function(event) {
+    alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
+  };
+
+  const get = function() {
+    const xhr = new XMLHttpRequest()
+    xhr.open('get','testget')
+    xhr.send()
+  }
+</script>
 </body>
 </html>
