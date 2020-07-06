@@ -2,3 +2,5 @@
 2. 我不会再一次解读没有异议的认知
 
 
+# 面试简单知识点速查
+1. [严格模式](https://www.runoob.com/js/js-strict.html)
