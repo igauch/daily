@@ -163,38 +163,38 @@ function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
     var request = new XMLHttpRequest();
     request.open(config.method.toUpperCase(), url, true);
-    request.timeout = config.timeout;
     request.onreadystatechange = function handleLoad() {
-      if (!request || request.readyState !== 4) {
-        return;
-      }
+      if (!request || request.readyState !== 4) return;
+      var response = {
+        data: responseData,
+        status: request.status,
+        statusText: request.statusText,
+        headers: responseHeaders,
+        config: config,
+        request: request
+      };
       settle(resolve, reject, response);
-      // Clean up request
-      request = null;
+      request = null; // Clean up request
     };
-    // onabort、onerror、ontimeout事件
-    // Add xsrf header
-    if (utils.isStandardBrowserEnv()) {
-      var xsrfValue =
-        (config.withCredentials || isURLSameOrigin(fullPath))
-        && config.xsrfCookieName
-        ? cookies.read(config.xsrfCookieName)
-        : undefined;
-      if (xsrfValue) {
-        requestHeaders[config.xsrfHeaderName] = xsrfValue;
-      }
-    }
-    // Handle progress if needed
-    if (typeof config.onDownloadProgress === 'function') {
-      request.addEventListener('progress', config.onDownloadProgress);
-    }
-    if (typeof config.onUploadProgress === 'function' && request.upload) {
-      request.upload.addEventListener('progress', config.onUploadProgress);
-    }
-    // cancelToken
+    // onabort、onerror、ontimeout、onprogress(download、upload)事件
+    // ... cancelToken ... Add xsrf header
     request.send(requestData);
   });
-};
+}
+```
+settle: Resolve or reject a Promise based on response status.
+```javascript
+// Add xsrf header
+if (utils.isStandardBrowserEnv()) {
+  var xsrfValue =
+    (config.withCredentials || isURLSameOrigin(fullPath))
+    && config.xsrfCookieName
+    ? cookies.read(config.xsrfCookieName)
+    : undefined;
+  if (xsrfValue) {
+    requestHeaders[config.xsrfHeaderName] = xsrfValue;
+  }
+}
 ```
 只有onreadystatechange是标准事件onload、onerror、onprogress是浏览器的实现
 readyState === 4 是请求完成
