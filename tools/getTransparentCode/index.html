@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="css/githubcode3.css">
+  <link rel="stylesheet" href="css/githubcode1.css">
+  <link rel="stylesheet" href="css/githubcode2.css">
+  <style>
+    body {
+      background: rgba(0, 0, 0, .5);
+      font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+    }
+    .markdown-body .highlight pre, .markdown-body pre {
+      padding: 0;
+    }
+  </style>
+  <script src="http://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+<div id="readme" class="Box-body readme blob js-code-block-container p-5 p-xl-6 gist-border-0">
+  <article class="markdown-body entry-content container-lg" itemprop="text"><h1><a id="user-content-axiosv0210-分析" class="anchor" aria-hidden="true" href="#axiosv0210-分析"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Axios(v0.21.0) 分析</h1>
+    <h2><a id="user-content-介绍" class="anchor" aria-hidden="true" href="#介绍"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>介绍</h2>
+    <blockquote>
+      <p>Promise based HTTP client for the browser and node.js</p>
+    </blockquote>
+    <p>支持浏览器和Nodejs的，基于Promise的HTTP客户端</p>
+    <p>key：</p>
+    <ol>
+      <li>平台差异：浏览器是通过XHR或者fetch进行请求，Nodejs则是通过引入http模块进行请求</li>
+      <li>Promise</li>
+      <li>HTTP：三次握手四次挥手</li>
+    </ol>
+    <h2><a id="user-content-main" class="anchor" aria-hidden="true" href="#main"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>main</h2>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-en">createInstance</span><span class="pl-kos">(</span><span class="pl-s1">defaultConfig</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">var</span> <span class="pl-s1">context</span> <span class="pl-c1">=</span> <span class="pl-k">new</span> <span class="pl-v">Axios</span><span class="pl-kos">(</span><span class="pl-s1">defaultConfig</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">instance</span> <span class="pl-c1">=</span> <span class="pl-en">bind</span><span class="pl-kos">(</span><span class="pl-v">Axios</span><span class="pl-kos">.</span><span class="pl-c1">prototype</span><span class="pl-kos">.</span><span class="pl-c1">request</span><span class="pl-kos">,</span> <span class="pl-s1">context</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-c">// Copy axios.prototype to instance</span>
+  <span class="pl-s1">utils</span><span class="pl-kos">.</span><span class="pl-en">extend</span><span class="pl-kos">(</span><span class="pl-s1">instance</span><span class="pl-kos">,</span> <span class="pl-v">Axios</span><span class="pl-kos">.</span><span class="pl-c1">prototype</span><span class="pl-kos">,</span> <span class="pl-s1">context</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-c">// Copy context to instance</span>
+  <span class="pl-s1">utils</span><span class="pl-kos">.</span><span class="pl-en">extend</span><span class="pl-kos">(</span><span class="pl-s1">instance</span><span class="pl-kos">,</span> <span class="pl-s1">context</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">return</span> <span class="pl-s1">instance</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span>
+<span class="pl-c">// Create the default instance to be exported</span>
+<span class="pl-k">var</span> <span class="pl-s1">axios</span> <span class="pl-c1">=</span> <span class="pl-en">createInstance</span><span class="pl-kos">(</span><span class="pl-s1">defaults</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+    <p>instance就指向了request方法，且上下文指向context
+      把Axios.prototype上的方法扩展到instance对象上，
+      这样 instance 就有了 get、post、put等方法
+      并指定上下文为context，这样执行Axios原型链上的方法时，this会指向context</p>
+    <p>把context对象上的自身属性和方法扩展到instance上（defaults和interceptors）</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-v">Axios</span><span class="pl-kos">(</span><span class="pl-s1">instanceConfig</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">defaults</span> <span class="pl-c1">=</span> <span class="pl-s1">instanceConfig</span><span class="pl-kos">;</span>
+  <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">interceptors</span> <span class="pl-c1">=</span> <span class="pl-kos">{</span>
+    <span class="pl-c1">request</span>: <span class="pl-k">new</span> <span class="pl-v">InterceptorManager</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">,</span>
+    <span class="pl-c1">response</span>: <span class="pl-k">new</span> <span class="pl-v">InterceptorManager</span><span class="pl-kos">(</span><span class="pl-kos">)</span>
+  <span class="pl-kos">}</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span></pre></div>
+    <div class="highlight highlight-source-js"><pre><span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-c1">interceptors</span><span class="pl-kos">.</span><span class="pl-c1">request</span><span class="pl-kos">.</span><span class="pl-en">use</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-c">// Do something before request is sent</span>
+    <span class="pl-k">return</span> <span class="pl-s1">config</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">error</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-c">// Do something with request error</span>
+    <span class="pl-k">return</span> <span class="pl-v">Promise</span><span class="pl-kos">.</span><span class="pl-en">reject</span><span class="pl-kos">(</span><span class="pl-s1">error</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-c1">interceptors</span><span class="pl-kos">.</span><span class="pl-c1">response</span><span class="pl-kos">.</span><span class="pl-en">use</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">response</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-c">// Do something with response data</span>
+    <span class="pl-k">return</span> <span class="pl-s1">response</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">error</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-c">// Do something with response error</span>
+    <span class="pl-k">return</span> <span class="pl-v">Promise</span><span class="pl-kos">.</span><span class="pl-en">reject</span><span class="pl-kos">(</span><span class="pl-s1">error</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+    <div class="highlight highlight-source-js"><pre><span class="pl-v">Axios</span><span class="pl-kos">.</span><span class="pl-c1">prototype</span><span class="pl-kos">.</span><span class="pl-en">request</span> <span class="pl-c1">=</span> <span class="pl-k">function</span> <span class="pl-en">request</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-c">// Hook up interceptors middleware</span>
+  <span class="pl-k">var</span> <span class="pl-s1">chain</span> <span class="pl-c1">=</span> <span class="pl-kos">[</span><span class="pl-s1">dispatchRequest</span><span class="pl-kos">,</span> <span class="pl-c1">undefined</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">promise</span> <span class="pl-c1">=</span> <span class="pl-v">Promise</span><span class="pl-kos">.</span><span class="pl-en">resolve</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">interceptors</span><span class="pl-kos">.</span><span class="pl-c1">request</span><span class="pl-kos">.</span><span class="pl-en">forEach</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">interceptor</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-s1">chain</span><span class="pl-kos">.</span><span class="pl-en">unshift</span><span class="pl-kos">(</span><span class="pl-s1">interceptor</span><span class="pl-kos">.</span><span class="pl-c1">fulfilled</span><span class="pl-kos">,</span> <span class="pl-s1">interceptor</span><span class="pl-kos">.</span><span class="pl-c1">rejected</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">interceptors</span><span class="pl-kos">.</span><span class="pl-c1">response</span><span class="pl-kos">.</span><span class="pl-en">forEach</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">interceptor</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-s1">chain</span><span class="pl-kos">.</span><span class="pl-en">push</span><span class="pl-kos">(</span><span class="pl-s1">interceptor</span><span class="pl-kos">.</span><span class="pl-c1">fulfilled</span><span class="pl-kos">,</span> <span class="pl-s1">interceptor</span><span class="pl-kos">.</span><span class="pl-c1">rejected</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">while</span> <span class="pl-kos">(</span><span class="pl-s1">chain</span><span class="pl-kos">.</span><span class="pl-c1">length</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-s1">promise</span> <span class="pl-c1">=</span> <span class="pl-s1">promise</span><span class="pl-kos">.</span><span class="pl-en">then</span><span class="pl-kos">(</span><span class="pl-s1">chain</span><span class="pl-kos">.</span><span class="pl-en">shift</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">,</span> <span class="pl-s1">chain</span><span class="pl-kos">.</span><span class="pl-en">shift</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span>
+  <span class="pl-k">return</span> <span class="pl-s1">promise</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span><span class="pl-kos">;</span></pre></div>
+    <p>dispatchRequest是执行请求的
+      连接拦截器中间件
+      ??为什么将config对象当作参数传给Promise.resolve方法
+      chain数组是用来盛放拦截器方法和dispatchRequest方法的，并且
+      ??为什么chain要放一个undefined,因为chain总是成对去处理
+      ??拦截器执行顺序
+      ??promise这块的执行顺序
+      添加了拦截器后的chain数组大概会是这样的：</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-kos">[</span>
+   <span class="pl-s1">requestFulfilledFn</span><span class="pl-kos">,</span> <span class="pl-s1">requestRejectedFn</span><span class="pl-kos">,</span> ...<span class="pl-kos">,</span>
+   <span class="pl-s1">dispatchRequest</span><span class="pl-kos">,</span> <span class="pl-c1">undefined</span><span class="pl-kos">,</span>
+   <span class="pl-s1">responseFulfilledFn</span><span class="pl-kos">,</span> <span class="pl-s1">responseRejectedFn</span><span class="pl-kos">,</span> ...
+<span class="pl-kos">]</span></pre></div>
+    <p>数组的 shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。
+      每次执行while循环，从chain数组里按序取出两项，并分别作为promise.then方法的第一个和第二个参数
+      对于请求拦截器，从拦截器数组按序读到后是通过unshift方法往chain数组数里添加的，又通过shift方法从chain数组里取出的，所以得出结论：对于请求拦截器，先添加的拦截器会后执行
+      对于响应拦截器，从拦截器数组按序读到后是通过push方法往chain数组里添加的，又通过shift方法从chain数组里取出的，所以得出结论：对于响应拦截器，先添加的拦截器先执行
+      第一个请求拦截器的fulfilled函数会接收到promise对象初始化时传入的config对象，而请求拦截器又规定用户写的fulfilled函数必须返回一个config对象，所以通过promise实现链式调用时，每个请求拦截器的fulfilled函数都会接收到一个config对象
+      第一个响应拦截器的fulfilled函数会接受到dispatchRequest（也就是我们的请求方法）请求到的数据（也就是response对象）,而响应拦截器又规定用户写的fulfilled函数必须返回一个response对象，所以通过promise实现链式调用时，每个响应拦截器的fulfilled函数都会接收到一个response对象
+      任何一个拦截器的抛出的错误，都会被下一个拦截器的rejected函数收到，所以dispatchRequest抛出的错误才会被响应拦截器接收到。
+      因为axios是通过promise实现的链式调用，所以我们可以在拦截器里进行异步操作，而拦截器的执行顺序还是会按照我们上面说的顺序执行，也就是 dispatchRequest 方法一定会等待所有的请求拦截器执行完后再开始执行，响应拦截器一定会等待 dispatchRequest 执行完后再开始执行。</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-v">InterceptorManager</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">handlers</span> <span class="pl-c1">=</span> <span class="pl-kos">[</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span>
+<span class="pl-v">InterceptorManager</span><span class="pl-kos">.</span><span class="pl-c1">prototype</span><span class="pl-kos">.</span><span class="pl-en">use</span> <span class="pl-c1">=</span> <span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">fulfilled</span><span class="pl-kos">,</span> <span class="pl-s1">rejected</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">handlers</span><span class="pl-kos">.</span><span class="pl-en">push</span><span class="pl-kos">(</span><span class="pl-kos">{</span>
+    <span class="pl-c1">fulfilled</span>: <span class="pl-s1">fulfilled</span><span class="pl-kos">,</span>
+    <span class="pl-c1">rejected</span>: <span class="pl-s1">rejected</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">return</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">handlers</span><span class="pl-kos">.</span><span class="pl-c1">length</span> <span class="pl-c1">-</span> <span class="pl-c1">1</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span><span class="pl-kos">;</span>
+<span class="pl-v">InterceptorManager</span><span class="pl-kos">.</span><span class="pl-c1">prototype</span><span class="pl-kos">.</span><span class="pl-en">eject</span> <span class="pl-c1">=</span> <span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">id</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">handlers</span><span class="pl-kos">[</span><span class="pl-s1">id</span><span class="pl-kos">]</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">handlers</span><span class="pl-kos">[</span><span class="pl-s1">id</span><span class="pl-kos">]</span> <span class="pl-c1">=</span> <span class="pl-c1">null</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span>
+<span class="pl-kos">}</span><span class="pl-kos">;</span>
+<span class="pl-v">InterceptorManager</span><span class="pl-kos">.</span><span class="pl-c1">prototype</span><span class="pl-kos">.</span><span class="pl-en">forEach</span> <span class="pl-c1">=</span> <span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">fn</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-c">// ...</span>
+<span class="pl-kos">}</span><span class="pl-kos">;</span></pre></div>
+    <p>handlers存放拦截器方法，数组内每一项都是有两个属性的对象，两个属性分别对应成功和失败后执行的函数。
+      遍历this.handlers，并将this.handlers里的每一项作为参数传给fn执行
+      ??unwatch你们会怎么实现</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-v">InterceptorManager</span><span class="pl-kos">.</span><span class="pl-c1">prototype</span><span class="pl-kos">.</span><span class="pl-en">use</span> <span class="pl-c1">=</span> <span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">fulfilled</span><span class="pl-kos">,</span> <span class="pl-s1">rejected</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-c">// ...</span>
+  <span class="pl-k">const</span> <span class="pl-s1">idx</span> <span class="pl-c1">=</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">handlers</span><span class="pl-kos">.</span><span class="pl-c1">length</span> <span class="pl-c1">-</span> <span class="pl-c1">1</span><span class="pl-kos">;</span>
+  <span class="pl-k">return</span> <span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">handlers</span><span class="pl-kos">[</span><span class="pl-s1">idx</span><span class="pl-kos">]</span> <span class="pl-c1">=</span> <span class="pl-c1">null</span>
+  <span class="pl-kos">}</span>
+<span class="pl-kos">}</span><span class="pl-kos">;</span></pre></div>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-en">throwIfCancellationRequested</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">cancelToken</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">cancelToken</span><span class="pl-kos">.</span><span class="pl-en">throwIfRequested</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span>
+<span class="pl-kos">}</span>
+<span class="pl-k">function</span> <span class="pl-en">dispatchRequest</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-en">throwIfCancellationRequested</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">adapter</span> <span class="pl-c1">=</span> <span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">adapter</span> <span class="pl-c1">||</span> <span class="pl-s1">defaults</span><span class="pl-kos">.</span><span class="pl-c1">adapter</span><span class="pl-kos">;</span>
+  <span class="pl-k">return</span> <span class="pl-s1">adapter</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">then</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">response</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-en">throwIfCancellationRequested</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-c">// ...</span>
+    <span class="pl-k">return</span> <span class="pl-s1">response</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-k">function</span> <span class="pl-en">onAdapterRejection</span><span class="pl-kos">(</span><span class="pl-s1">reason</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-k">if</span> <span class="pl-kos">(</span>!<span class="pl-en">isCancel</span><span class="pl-kos">(</span><span class="pl-s1">reason</span><span class="pl-kos">)</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-en">throwIfCancellationRequested</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+      <span class="pl-c">// ...</span>
+    <span class="pl-kos">}</span>
+
+    <span class="pl-k">return</span> <span class="pl-v">Promise</span><span class="pl-kos">.</span><span class="pl-en">reject</span><span class="pl-kos">(</span><span class="pl-s1">reason</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span><span class="pl-kos">;</span></pre></div>
+    <p>adapter允许自定义处理请求</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-en">xhrAdapter</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">return</span> <span class="pl-k">new</span> <span class="pl-v">Promise</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-en">dispatchXhrRequest</span><span class="pl-kos">(</span><span class="pl-s1">resolve</span><span class="pl-kos">,</span> <span class="pl-s1">reject</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-k">var</span> <span class="pl-s1">request</span> <span class="pl-c1">=</span> <span class="pl-k">new</span> <span class="pl-v">XMLHttpRequest</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-en">open</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">method</span><span class="pl-kos">.</span><span class="pl-en">toUpperCase</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">,</span> <span class="pl-s1">url</span><span class="pl-kos">,</span> <span class="pl-c1">true</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-en">onreadystatechange</span> <span class="pl-c1">=</span> <span class="pl-k">function</span> <span class="pl-en">handleLoad</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-k">if</span> <span class="pl-kos">(</span>!<span class="pl-s1">request</span> <span class="pl-c1">||</span> <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-c1">readyState</span> !== <span class="pl-c1">4</span><span class="pl-kos">)</span> <span class="pl-k">return</span><span class="pl-kos">;</span>
+      <span class="pl-k">var</span> <span class="pl-s1">response</span> <span class="pl-c1">=</span> <span class="pl-kos">{</span>
+        <span class="pl-c1">data</span>: <span class="pl-s1">responseData</span><span class="pl-kos">,</span>
+        <span class="pl-c1">status</span>: <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-c1">status</span><span class="pl-kos">,</span>
+        <span class="pl-c1">statusText</span>: <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-c1">statusText</span><span class="pl-kos">,</span>
+        <span class="pl-c1">headers</span>: <span class="pl-s1">responseHeaders</span><span class="pl-kos">,</span>
+        <span class="pl-c1">config</span>: <span class="pl-s1">config</span><span class="pl-kos">,</span>
+        <span class="pl-c1">request</span>: <span class="pl-s1">request</span>
+      <span class="pl-kos">}</span><span class="pl-kos">;</span>
+      <span class="pl-en">settle</span><span class="pl-kos">(</span><span class="pl-s1">resolve</span><span class="pl-kos">,</span> <span class="pl-s1">reject</span><span class="pl-kos">,</span> <span class="pl-s1">response</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+      <span class="pl-s1">request</span> <span class="pl-c1">=</span> <span class="pl-c1">null</span><span class="pl-kos">;</span> <span class="pl-c">// Clean up request</span>
+    <span class="pl-kos">}</span><span class="pl-kos">;</span>
+    <span class="pl-c">// onabort、onerror、ontimeout、onprogress(download、upload)事件</span>
+    <span class="pl-c">// ... cancelToken ... Add xsrf header</span>
+    <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-en">send</span><span class="pl-kos">(</span><span class="pl-s1">requestData</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span></pre></div>
+    <p>settle: Resolve or reject a Promise based on response status.</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-c">// Add xsrf header</span>
+<span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">utils</span><span class="pl-kos">.</span><span class="pl-en">isStandardBrowserEnv</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">var</span> <span class="pl-s1">xsrfValue</span> <span class="pl-c1">=</span>
+    <span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">withCredentials</span> <span class="pl-c1">||</span> <span class="pl-en">isURLSameOrigin</span><span class="pl-kos">(</span><span class="pl-s1">fullPath</span><span class="pl-kos">)</span><span class="pl-kos">)</span>
+    <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">xsrfCookieName</span>
+    ? <span class="pl-s1">cookies</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">xsrfCookieName</span><span class="pl-kos">)</span>
+    : <span class="pl-c1">undefined</span><span class="pl-kos">;</span>
+  <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">xsrfValue</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-s1">requestHeaders</span><span class="pl-kos">[</span><span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">xsrfHeaderName</span><span class="pl-kos">]</span> <span class="pl-c1">=</span> <span class="pl-s1">xsrfValue</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span>
+<span class="pl-kos">}</span></pre></div>
+    <p>只有onreadystatechange是标准事件onload、onerror、onprogress是浏览器的实现
+      readyState === 4 是请求完成
+      清理request已释放内存
+      withCredentials一个布尔值，用来指定跨域Access-Control请求是否应当带有授权信息，如cookie或授权header头。
+      xsrfCookieName是用作 xsrf token 的值的cookie的名称</p>
+    <h2><a id="user-content-csrfxsrfcross-site-request-forgery" class="anchor" aria-hidden="true" href="#csrfxsrfcross-site-request-forgery"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>CSRF/XSRF（Cross-site request forgery）</h2>
+    <p>跨站请求伪造，当正常用户还没有退出登陆还有效的情况下伪装成该受信任用户的请求进行一些恶意的访问操作</p>
+    <p>防御方法：</p>
+    <ol>
+      <li>检查Referer字段</li>
+      <li>同步表单CSRF校验</li>
+      <li>双重Cookie防御</li>
+    </ol>
+    <p>双重 Cookie 防御 就是将 token 设置在 Cookie 中，在提交（POST、PUT、PATCH、DELETE）等请求时提交 Cookie，并通过请求头或请求体带上 Cookie 中已设置的 token，服务端接收到请求后，再进行对比校验。</p>
+    <p>始作俑者：浏览器的同源策略
+      img/video/source、form表单、iframe等</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">cancelToken</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-c">// Handle cancellation</span>
+  <span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">cancelToken</span><span class="pl-kos">.</span><span class="pl-c1">promise</span><span class="pl-kos">.</span><span class="pl-en">then</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-en">onCanceled</span><span class="pl-kos">(</span><span class="pl-s1">cancel</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-k">if</span> <span class="pl-kos">(</span>!<span class="pl-s1">request</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-k">return</span><span class="pl-kos">;</span>
+    <span class="pl-kos">}</span>
+    <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-en">abort</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-en">reject</span><span class="pl-kos">(</span><span class="pl-s1">cancel</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-c">// Clean up request</span>
+    <span class="pl-s1">request</span> <span class="pl-c1">=</span> <span class="pl-c1">null</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span></pre></div>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-v">CancelToken</span> <span class="pl-c1">=</span> <span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-c1">CancelToken</span><span class="pl-kos">;</span>
+<span class="pl-k">const</span> <span class="pl-s1">source</span> <span class="pl-c1">=</span> <span class="pl-v">CancelToken</span><span class="pl-kos">.</span><span class="pl-en">source</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-en">post</span><span class="pl-kos">(</span><span class="pl-s">'/user/12345'</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
+  <span class="pl-c1">name</span>: <span class="pl-s">'new name'</span>
+<span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
+  <span class="pl-c1">cancelToken</span>: <span class="pl-s1">source</span><span class="pl-kos">.</span><span class="pl-c1">token</span>
+<span class="pl-kos">}</span><span class="pl-kos">)</span>
+<span class="pl-c">// cancel the request (the message parameter is optional)</span>
+<span class="pl-s1">source</span><span class="pl-kos">.</span><span class="pl-en">cancel</span><span class="pl-kos">(</span><span class="pl-s">'Operation canceled by the user.'</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+    <p>??为什么搞那么复杂，而不是直接abord?或者简单点?因为取消场景边</p>
+    <h2><a id="user-content-我们的实践" class="anchor" aria-hidden="true" href="#我们的实践"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>我们的实践</h2>
+  </article>
+</div>
+<script>
+  let promise = Promise.resolve(1)
+  Array.from(document.querySelectorAll("#readme > article pre")).forEach((el, idx) => {
+    if (idx < 5) {
+      return
+    }
+    promise = html2canvas(el, {
+      backgroundColor: null,
+      scrollX: 0,
+      scrollY: -22,
+      scale: 4
+    }).then(canvas => {
+      console.log(1)
+      var img = document.createElement('img')
+      img.src = canvas.toDataURL("image/png")
+      document.body.appendChild(img)
+      return idx
+    }).catch((e) => {
+      console.log(e)
+    });
+  })
+  promise.then(console.log)
+</script>
+</body>
+</html>
