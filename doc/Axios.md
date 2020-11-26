@@ -1,5 +1,7 @@
 # Axios(v0.21.0) 分析
 
+讲什么挺重要，但更重要的是通过一个主题进行的交流，所以不好的地方、有异议的地方请随时打断
+
 ## 介绍
 > Promise based HTTP client for the browser and node.js
 
@@ -83,6 +85,7 @@ chain数组是用来盛放拦截器方法和dispatchRequest方法的，并且
 ??为什么chain要放一个undefined,因为chain总是成对去处理
 ??拦截器执行顺序
 ??promise这块的执行顺序
+符合迭代的概念，但并不是迭代器的写法
 添加了拦截器后的chain数组大概会是这样的：
 ```javascript
 [
@@ -198,7 +201,7 @@ if (utils.isStandardBrowserEnv()) {
 ```
 只有onreadystatechange是标准事件onload、onerror、onprogress是浏览器的实现
 readyState === 4 是请求完成
-清理request已释放内存
+清理request是为什么？释放内存还是有其他意图？
 withCredentials一个布尔值，用来指定跨域Access-Control请求是否应当带有授权信息，如cookie或授权header头。
 xsrfCookieName是用作 xsrf token 的值的cookie的名称
 
@@ -217,32 +220,75 @@ img/video/source、form表单、iframe等
 
 ```javascript
 if (config.cancelToken) {
-  // Handle cancellation
   config.cancelToken.promise.then(function onCanceled(cancel) {
-    if (!request) {
-      return;
-    }
+    if (!request) return;
     request.abort();
     reject(cancel);
-    // Clean up request
-    request = null;
+    request = null; // Clean up request
   });
 }
 ```
+当promise被resolve时取消请求，那什么时候呢？肯定是我们调用取消时，
 
 ```javascript
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
-axios.post('/user/12345', {
-  name: 'new name'
-}, {
+const source = axios.CancelToken.source();
+axios.get('/user/12345', {
   cancelToken: source.token
 })
 // cancel the request (the message parameter is optional)
 source.cancel('Operation canceled by the user.');
 ```
+cancel和token可以看作是县令和拿着令牌的通信兵
+```javascript
+function CancelToken(executor) {
+  var resolvePromise;
+  this.promise = new Promise(function promiseExecutor(resolve) {
+    resolvePromise = resolve;
+  });
+  var token = this;
+  executor(function cancel(message) {
+    if (token.reason) {
+      return; // Cancellation has already been requested
+    }
+    token.reason = new Cancel(message);
+    resolvePromise(token.reason);
+  });
+}
+CancelToken.source = function source() {
+  var cancel;
+  var token = new CancelToken(function (c) { cancel = c; });
+  return {
+    token: token,
+    cancel: cancel
+  };
+};
+```
+new Cancel(message)其实就是抛出一个包含取消信息的对象，而且只包含这个，而且通过toString直接提供输入错误信息字符串的便捷方式
+??为什么搞那么复杂，而不是直接abord?或者简单点?因为axios对外输出的就是promise，只有resolve、reject，不能再挂载或者对外提供取消方法
+那怎么办呢？要么不再提供promise的用法，但显然这不符合我们的使用习惯，并且取消的场景很少，这很不值得，那就只能向新对象提供取消的方法了，这也是axios的做法
+是不是感觉这种写法很绕？可不可以直接将cancelhandle抛出去
+对我们的封装有什么影响
 
-??为什么搞那么复杂，而不是直接abord?或者简单点?因为取消场景边
+```javascript
+if (config.getCancelHandler) {
+  config.getCancelHandler((msg) => {
+    if (!request) return;
+    request.abort();
+    reject(msg);
+    request = null; // Clean up request
+  })
+}
+// use
+let cancel;
+const getCancelHandler = function (handler) {
+  cancel = handler
+}
+axios.get('/user/12345', {
+  getCancelHandler
+})
+// cancel the request (the message parameter is optional)
+cancel('Operation canceled by the user.');
+```
 
 ## 我们的实践
 
