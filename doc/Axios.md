@@ -227,10 +227,7 @@ if (config.cancelToken) {
     request = null; // Clean up request
   });
 }
-```
-当promise被resolve时取消请求，那什么时候呢？肯定是我们调用取消时，
-
-```javascript
+// use
 const source = axios.CancelToken.source();
 axios.get('/user/12345', {
   cancelToken: source.token
@@ -238,6 +235,8 @@ axios.get('/user/12345', {
 // cancel the request (the message parameter is optional)
 source.cancel('Operation canceled by the user.');
 ```
+当promise被resolve时取消请求，那什么时候呢？肯定是我们调用取消时，
+
 cancel和token可以看作是县令和拿着令牌的通信兵
 ```javascript
 function CancelToken(executor) {

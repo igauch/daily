@@ -23,6 +23,7 @@
 <body>
 <div id="readme" class="Box-body readme blob js-code-block-container p-5 p-xl-6 gist-border-0">
   <article class="markdown-body entry-content container-lg" itemprop="text"><h1><a id="user-content-axiosv0210-分析" class="anchor" aria-hidden="true" href="#axiosv0210-分析"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Axios(v0.21.0) 分析</h1>
+    <p>讲什么挺重要，但更重要的是通过一个主题进行的交流，所以不好的地方、有异议的地方请随时打断</p>
     <h2><a id="user-content-介绍" class="anchor" aria-hidden="true" href="#介绍"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>介绍</h2>
     <blockquote>
       <p>Promise based HTTP client for the browser and node.js</p>
@@ -94,6 +95,7 @@
       ??为什么chain要放一个undefined,因为chain总是成对去处理
       ??拦截器执行顺序
       ??promise这块的执行顺序
+      符合迭代的概念，但并不是迭代器的写法
       添加了拦截器后的chain数组大概会是这样的：</p>
     <div class="highlight highlight-source-js"><pre><span class="pl-kos">[</span>
    <span class="pl-s1">requestFulfilledFn</span><span class="pl-kos">,</span> <span class="pl-s1">requestRejectedFn</span><span class="pl-kos">,</span> ...<span class="pl-kos">,</span>
@@ -194,7 +196,7 @@
 <span class="pl-kos">}</span></pre></div>
     <p>只有onreadystatechange是标准事件onload、onerror、onprogress是浏览器的实现
       readyState === 4 是请求完成
-      清理request已释放内存
+      清理request是为什么？释放内存还是有其他意图？
       withCredentials一个布尔值，用来指定跨域Access-Control请求是否应当带有授权信息，如cookie或授权header头。
       xsrfCookieName是用作 xsrf token 的值的cookie的名称</p>
     <h2><a id="user-content-csrfxsrfcross-site-request-forgery" class="anchor" aria-hidden="true" href="#csrfxsrfcross-site-request-forgery"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>CSRF/XSRF（Cross-site request forgery）</h2>
@@ -209,27 +211,66 @@
     <p>始作俑者：浏览器的同源策略
       img/video/source、form表单、iframe等</p>
     <div class="highlight highlight-source-js"><pre><span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">cancelToken</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
-  <span class="pl-c">// Handle cancellation</span>
   <span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">cancelToken</span><span class="pl-kos">.</span><span class="pl-c1">promise</span><span class="pl-kos">.</span><span class="pl-en">then</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-en">onCanceled</span><span class="pl-kos">(</span><span class="pl-s1">cancel</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
-    <span class="pl-k">if</span> <span class="pl-kos">(</span>!<span class="pl-s1">request</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
-      <span class="pl-k">return</span><span class="pl-kos">;</span>
-    <span class="pl-kos">}</span>
+    <span class="pl-k">if</span> <span class="pl-kos">(</span>!<span class="pl-s1">request</span><span class="pl-kos">)</span> <span class="pl-k">return</span><span class="pl-kos">;</span>
     <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-en">abort</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
     <span class="pl-en">reject</span><span class="pl-kos">(</span><span class="pl-s1">cancel</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
-    <span class="pl-c">// Clean up request</span>
-    <span class="pl-s1">request</span> <span class="pl-c1">=</span> <span class="pl-c1">null</span><span class="pl-kos">;</span>
+    <span class="pl-s1">request</span> <span class="pl-c1">=</span> <span class="pl-c1">null</span><span class="pl-kos">;</span> <span class="pl-c">// Clean up request</span>
   <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
 <span class="pl-kos">}</span></pre></div>
-    <div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-v">CancelToken</span> <span class="pl-c1">=</span> <span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-c1">CancelToken</span><span class="pl-kos">;</span>
-<span class="pl-k">const</span> <span class="pl-s1">source</span> <span class="pl-c1">=</span> <span class="pl-v">CancelToken</span><span class="pl-kos">.</span><span class="pl-en">source</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
-<span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-en">post</span><span class="pl-kos">(</span><span class="pl-s">'/user/12345'</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
-  <span class="pl-c1">name</span>: <span class="pl-s">'new name'</span>
-<span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
+    <p>当promise被resolve时取消请求，那什么时候呢？肯定是我们调用取消时，</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-s1">source</span> <span class="pl-c1">=</span> <span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-c1">CancelToken</span><span class="pl-kos">.</span><span class="pl-en">source</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-en">get</span><span class="pl-kos">(</span><span class="pl-s">'/user/12345'</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
   <span class="pl-c1">cancelToken</span>: <span class="pl-s1">source</span><span class="pl-kos">.</span><span class="pl-c1">token</span>
 <span class="pl-kos">}</span><span class="pl-kos">)</span>
 <span class="pl-c">// cancel the request (the message parameter is optional)</span>
 <span class="pl-s1">source</span><span class="pl-kos">.</span><span class="pl-en">cancel</span><span class="pl-kos">(</span><span class="pl-s">'Operation canceled by the user.'</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
-    <p>??为什么搞那么复杂，而不是直接abord?或者简单点?因为取消场景边</p>
+    <p>cancel和token可以看作是县令和拿着令牌的通信兵</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-v">CancelToken</span><span class="pl-kos">(</span><span class="pl-s1">executor</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">var</span> <span class="pl-s1">resolvePromise</span><span class="pl-kos">;</span>
+  <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">promise</span> <span class="pl-c1">=</span> <span class="pl-k">new</span> <span class="pl-v">Promise</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-en">promiseExecutor</span><span class="pl-kos">(</span><span class="pl-s1">resolve</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-s1">resolvePromise</span> <span class="pl-c1">=</span> <span class="pl-s1">resolve</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">token</span> <span class="pl-c1">=</span> <span class="pl-smi">this</span><span class="pl-kos">;</span>
+  <span class="pl-s1">executor</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-en">cancel</span><span class="pl-kos">(</span><span class="pl-s1">message</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">token</span><span class="pl-kos">.</span><span class="pl-c1">reason</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-k">return</span><span class="pl-kos">;</span> <span class="pl-c">// Cancellation has already been requested</span>
+    <span class="pl-kos">}</span>
+    <span class="pl-s1">token</span><span class="pl-kos">.</span><span class="pl-c1">reason</span> <span class="pl-c1">=</span> <span class="pl-k">new</span> <span class="pl-v">Cancel</span><span class="pl-kos">(</span><span class="pl-s1">message</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-s1">resolvePromise</span><span class="pl-kos">(</span><span class="pl-s1">token</span><span class="pl-kos">.</span><span class="pl-c1">reason</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span>
+<span class="pl-v">CancelToken</span><span class="pl-kos">.</span><span class="pl-en">source</span> <span class="pl-c1">=</span> <span class="pl-k">function</span> <span class="pl-en">source</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">var</span> <span class="pl-s1">cancel</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">token</span> <span class="pl-c1">=</span> <span class="pl-k">new</span> <span class="pl-v">CancelToken</span><span class="pl-kos">(</span><span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">c</span><span class="pl-kos">)</span> <span class="pl-kos">{</span> <span class="pl-s1">cancel</span> <span class="pl-c1">=</span> <span class="pl-s1">c</span><span class="pl-kos">;</span> <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">return</span> <span class="pl-kos">{</span>
+    <span class="pl-c1">token</span>: <span class="pl-s1">token</span><span class="pl-kos">,</span>
+    <span class="pl-c1">cancel</span>: <span class="pl-s1">cancel</span>
+  <span class="pl-kos">}</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span><span class="pl-kos">;</span></pre></div>
+    <p>new Cancel(message)其实就是抛出一个包含取消信息的对象，而且只包含这个，而且通过toString直接提供输入错误信息字符串的便捷方式
+      ??为什么搞那么复杂，而不是直接abord?或者简单点?因为axios对外输出的就是promise，只有resolve、reject，不能再挂载或者对外提供取消方法
+      那怎么办呢？要么不再提供promise的用法，但显然这不符合我们的使用习惯，并且取消的场景很少，这很不值得，那就只能向新对象提供取消的方法了，这也是axios的做法
+      是不是感觉这种写法很绕？可不可以直接将cancelhandle抛出去
+      对我们的封装有什么影响</p>
+    <div class="highlight highlight-source-js"><pre><span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-c1">getCancelHandler</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-en">getCancelHandler</span><span class="pl-kos">(</span><span class="pl-kos">(</span><span class="pl-s1">msg</span><span class="pl-kos">)</span> <span class="pl-c1">=&gt;</span> <span class="pl-kos">{</span>
+    <span class="pl-k">if</span> <span class="pl-kos">(</span>!<span class="pl-s1">request</span><span class="pl-kos">)</span> <span class="pl-k">return</span><span class="pl-kos">;</span>
+    <span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-en">abort</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-en">reject</span><span class="pl-kos">(</span><span class="pl-s1">msg</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-s1">request</span> <span class="pl-c1">=</span> <span class="pl-c1">null</span><span class="pl-kos">;</span> <span class="pl-c">// Clean up request</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span>
+<span class="pl-kos">}</span>
+<span class="pl-c">// use</span>
+<span class="pl-k">let</span> <span class="pl-s1">cancel</span><span class="pl-kos">;</span>
+<span class="pl-k">const</span> <span class="pl-en">getCancelHandler</span> <span class="pl-c1">=</span> <span class="pl-k">function</span> <span class="pl-kos">(</span><span class="pl-s1">handler</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-s1">cancel</span> <span class="pl-c1">=</span> <span class="pl-s1">handler</span>
+<span class="pl-kos">}</span>
+<span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-en">get</span><span class="pl-kos">(</span><span class="pl-s">'/user/12345'</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
+  getCancelHandler
+<span class="pl-kos">}</span><span class="pl-kos">)</span>
+<span class="pl-c">// cancel the request (the message parameter is optional)</span>
+<span class="pl-s1">cancel</span><span class="pl-kos">(</span><span class="pl-s">'Operation canceled by the user.'</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
     <h2><a id="user-content-我们的实践" class="anchor" aria-hidden="true" href="#我们的实践"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>我们的实践</h2>
   </article>
 </div>
