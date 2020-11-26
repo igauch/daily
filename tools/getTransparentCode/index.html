@@ -217,14 +217,15 @@
     <span class="pl-en">reject</span><span class="pl-kos">(</span><span class="pl-s1">cancel</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
     <span class="pl-s1">request</span> <span class="pl-c1">=</span> <span class="pl-c1">null</span><span class="pl-kos">;</span> <span class="pl-c">// Clean up request</span>
   <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
-<span class="pl-kos">}</span></pre></div>
-    <p>当promise被resolve时取消请求，那什么时候呢？肯定是我们调用取消时，</p>
-    <div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-s1">source</span> <span class="pl-c1">=</span> <span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-c1">CancelToken</span><span class="pl-kos">.</span><span class="pl-en">source</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span>
+<span class="pl-c">// use</span>
+<span class="pl-k">const</span> <span class="pl-s1">source</span> <span class="pl-c1">=</span> <span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-c1">CancelToken</span><span class="pl-kos">.</span><span class="pl-en">source</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
 <span class="pl-s1">axios</span><span class="pl-kos">.</span><span class="pl-en">get</span><span class="pl-kos">(</span><span class="pl-s">'/user/12345'</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
   <span class="pl-c1">cancelToken</span>: <span class="pl-s1">source</span><span class="pl-kos">.</span><span class="pl-c1">token</span>
 <span class="pl-kos">}</span><span class="pl-kos">)</span>
 <span class="pl-c">// cancel the request (the message parameter is optional)</span>
 <span class="pl-s1">source</span><span class="pl-kos">.</span><span class="pl-en">cancel</span><span class="pl-kos">(</span><span class="pl-s">'Operation canceled by the user.'</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+    <p>当promise被resolve时取消请求，那什么时候呢？肯定是我们调用取消时，</p>
     <p>cancel和token可以看作是县令和拿着令牌的通信兵</p>
     <div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-v">CancelToken</span><span class="pl-kos">(</span><span class="pl-s1">executor</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
   <span class="pl-k">var</span> <span class="pl-s1">resolvePromise</span><span class="pl-kos">;</span>

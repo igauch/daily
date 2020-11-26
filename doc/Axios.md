@@ -137,12 +137,8 @@ InterceptorManager.prototype.use = function (fulfilled, rejected) {
 ```
 
 ```javascript
-function throwIfCancellationRequested(config) {
-  if (config.cancelToken) {
-    config.cancelToken.throwIfRequested();
-  }
-}
 function dispatchRequest(config) {
+  // Throws a `Cancel` if cancellation has been requested.
   throwIfCancellationRequested(config);
   var adapter = config.adapter || defaults.adapter;
   return adapter(config).then(function (response) {
@@ -154,7 +150,6 @@ function dispatchRequest(config) {
       throwIfCancellationRequested(config);
       // ...
     }
-
     return Promise.reject(reason);
   });
 };
