@@ -29,11 +29,13 @@ const getProjects = async function(params ={}) {
 }
 
 const main = async function() {
+  console.log('正在获取所有项目')
   await getProjects()
-  const dirStr = 'e:\\codes'
+  const dirStr = '/Users/gauchwork'
+  console.log(`已获取到${allProjects.length}个项目`)
   allProjects.map(obj => {
     const p = `${dirStr}/mpGitRepos/${obj.path_with_namespace}`
-    console.log(p, obj.ssh_url_to_repo)
+    console.log(`准备将${obj.ssh_url_to_repo}clone到${p}`)
     let hasP = false
     try {
       const stat = fs.statSync(p);
@@ -43,19 +45,20 @@ const main = async function() {
     }
     let res
     if (hasP) {
+      console.log(`${p}已存在在本地`)
       try {
         execSync('git pull', {
           cwd: p
         })
       } catch (e) {
+        console.error('执行pull失败')
         console.log(e)
       }
-      console.log(1)
     } else {
       res = execSync(`git clone ${obj.ssh_url_to_repo} ${p}`)
-      console.log(2)
+      console.log('clone成功')
     }
-    console.log(res)
+    console.log('clone response：', res)
     console.log('=========================')
   })
 }
