@@ -33,7 +33,7 @@ const main = async function() {
   await getProjects()
   const dirStr = '/Users/gauchwork'
   console.log(`已获取到${allProjects.length}个项目`)
-  allProjects.map(obj => {
+  allProjects.map((obj, idx) => {
     const p = `${dirStr}/mpGitRepos/${obj.path_with_namespace}`
     console.log(`准备将${obj.ssh_url_to_repo}clone到${p}`)
     let hasP = false
@@ -59,7 +59,7 @@ const main = async function() {
       console.log('clone成功')
     }
     console.log('clone response：', res)
-    console.log('=========================')
+    console.log(`=========== 当前进度：${idx + 1} / ${allProjects.length} ==============`)
   })
 }
 main()
